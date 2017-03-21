@@ -12,7 +12,7 @@ var url = process.env.AZURE_STORAGEACCOUNT + process.env.AZURE_CONTAINERNAME;
 
 var app = express()
 
-app.get('/:code', function (req, res) {
+app.get('/code/:code', function (req, res) {
 	var fileName = req.params.code + '.7z';
 	res.setHeader('Content-disposition', 'attachment; filename=' + fileName);
 	request
