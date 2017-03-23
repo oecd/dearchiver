@@ -1,0 +1,21 @@
+/* voir http://getbootstrap.com/css/#grid*/
+
+body {
+font:100%/1.5 "Century Gothic", sans-serif, arial, helvetica!important;
+color:#281b21;
+margin:.188em!important;
+padding:0!important;
+border-width:0;
+background:#FFF!important;
+}
+
+h1 {
+	
+	text-align:center;
+	display:block;
+}
+
+.form {
+	text-align:center;
+	display:block;
+}
