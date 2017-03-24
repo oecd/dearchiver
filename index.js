@@ -2,7 +2,7 @@ require('dotenv').config({path: './_env'});
 var bodyParser = require('body-parser');
 var express = require('express')
 var fs = require('fs');
- var path = require('path')
+var path = require('path')
 var request = require('request');
 
 //	The full url to access stored files
@@ -13,7 +13,8 @@ var app = express()
 
 app.set('view engine', 'pug');
 
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -21,19 +22,19 @@ app.get('/', function (req, res) {
 	res.render('index', {
 		title: 'PAC acrhives', 
 		message: 'Enter your code',
-		formAction: '/code',
-		formMethod: 'post',
-		inputTextAreaType: 'text',
-		inputTextAreaName: 'blobFile',
-		inputButtonType: 'submit',
-		inputButtonValue: 'Dowload'
+		inputFileName: 'blobFile',
 	});
 })
 
 app.post('/code', function (req, res) {
 	var fileName = req.body.blobFile + '.7z';
+    var requestSettings = {
+            method: 'GET',
+            url: url + fileName,
+            encoding: null
+        };
 	try {
-		request(url + fileName, function(err, response) {
+		request(requestSettings, function(err, response) {
 			if (response.statusCode !== 200) {
 				console.log('bad beat!')
 				res.send(

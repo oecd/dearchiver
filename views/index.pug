@@ -1,19 +1,9 @@
 html
 	head
 		title= title
-		link(href='/css/styles.css', rel='stylesheet', type='text/css')
+		link(href='/css/bootstrap.min.css' rel='stylesheet' type='text/css')
 	body
 		h1= message
-		div(class='form')
-			form(
-				action= formAction
-				method= formMethod
-			)
-				input(
-					type= inputTextAreaType
-					name= inputTextAreaName
-				)
-				input(
-					type= inputButtonType
-					value= inputButtonValue
-				)
+		form(action='/code' method='post')
+			input(type='text' name= inputFileName)
+			input(type='submit' value='Dowload')
