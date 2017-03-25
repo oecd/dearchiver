@@ -5,6 +5,7 @@ var path = require('path')
 var request = require('request')
 
 var url = process.env.AZURE_STORAGEACCOUNT + process.env.AZURE_CONTAINERNAME
+var port = process.env.PORT || 3000
 
 var app = express()
 app.set('view engine', 'pug')
@@ -46,4 +47,4 @@ app.post('/code', function (req, res) {
   }
 })
 
-app.listen(3000)
+app.listen(port)
