@@ -1,6 +1,6 @@
 # azure-dearchiver
 
-Get blob from azure.
+Get a blob from azure storage.
 
 Blobs are stored as 7z files.
 
