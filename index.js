@@ -47,4 +47,6 @@ app.post('/code', function (req, res) {
   }
 })
 
-app.listen(port)
+app.listen(port, function () {
+  console.log(`Dearchiver is now listening on port ${port}!`)
+})
