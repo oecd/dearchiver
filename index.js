@@ -1,7 +1,6 @@
 require('dotenv').config({path: './_env'});
 var bodyParser = require('body-parser');
 var express = require('express')
-var fs = require('fs');
 var path = require('path')
 var request = require('request');
 
@@ -20,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
 	res.render('index', {
-		title: 'PAC acrhives', 
+		title: 'PAC acrhives',
 		message: 'Enter your code',
 		inputFileName: 'blobFile',
 	});
@@ -47,7 +46,7 @@ app.post('/code', function (req, res) {
 			res.send(response.body);
 			res.end();
 		})
-		
+
 	} catch(e) {
 		res.send('File does not exist').end();
 	}
