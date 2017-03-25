@@ -1,13 +1,13 @@
-var bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 require('dotenv').config({path: './_env'})
-var express = require('express')
-var path = require('path')
-var request = require('request')
+const express = require('express')
+const path = require('path')
+const request = require('request')
 
-var url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME}/`
-var port = process.env.PORT || 3000
+const url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME}/`
+const port = process.env.PORT || 3000
 
-var app = express()
+const app = express()
 app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -21,8 +21,8 @@ app.get('/', function (req, res) {
 })
 
 app.post('/code', function (req, res) {
-  var fileName = req.body.blobFile + '.7z'
-  var requestSettings = {
+  const fileName = req.body.blobFile + '.7z'
+  const requestSettings = {
     method: 'GET',
     url: url + fileName,
     encoding: null
