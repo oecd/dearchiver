@@ -1,5 +1,5 @@
-require('dotenv').config({path: './_env'})
 var bodyParser = require('body-parser')
+require('dotenv').config({path: './_env'})
 var express = require('express')
 var path = require('path')
 var request = require('request')
