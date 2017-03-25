@@ -4,7 +4,7 @@ var express = require('express')
 var path = require('path')
 var request = require('request')
 
-var url = process.env.AZURE_STORAGEACCOUNT + process.env.AZURE_CONTAINERNAME
+var url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME}/`
 var port = process.env.PORT || 3000
 
 var app = express()
