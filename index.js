@@ -31,7 +31,7 @@ app.post('/code', function (req, res) {
     request(requestSettings, function (err, response) {
       if (err) return console.log(err)
       if (response.statusCode !== 200) {
-        console.log('bad beat!')
+        console.log(`!!! Unknown code ${req.body.blobFile}.`)
         res.send(
           '<div>The code ' + req.body.blobFile + ' does not exist</div>' +
           '<input type="button" value="Back" onclick="window.history.back()"/>'
