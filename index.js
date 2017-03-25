@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/', function (req, res) {
   res.render('index', {
-    title: 'PAC acrhives',
+    title: 'PAC Archives',
     message: 'Enter your code',
     inputFileName: 'blobFile'
   })
