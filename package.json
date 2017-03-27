@@ -2,7 +2,7 @@
   "name": "azure-dearchiver",
   "version": "1.0.0",
   "description": "Get blob from azure.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
