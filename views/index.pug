@@ -3,7 +3,24 @@ html
 		title= title
 		link(href='/css/bootstrap.min.css' rel='stylesheet' type='text/css')
 	body
-		h1= message
-		form(action='/code' method='post')
-			input(type='text' name= inputFileName)
-			input(type='submit' value='Dowload')
+
+	div(class='container theme-showcase' role='main')
+			.row
+				.col-md-6.col-md-offset-3
+					|
+					h1 Dearchiver
+					|
+					.jumbotron
+						.row
+							.col
+								h2 Enter OECD code
+								if errorMessage
+									div.alert.alert-danger #{errorMessage}
+
+
+								form.navbar-form.navbar-left(action='/code' method='post')
+									.col-lg-6
+										.input-group
+											input.form-control(type="text" placeholder="Code goes here ..." name="blobFile" id="blobFile")
+											span.input-group-btn
+												button.btn.btn-default(type="submit") Go!
