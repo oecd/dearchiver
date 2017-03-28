@@ -19,7 +19,7 @@ app.get('/', function (req, res) {
   })
 })
 
-app.post('/code', function (req, res) {
+app.post('/', function (req, res) {
   const fileName = req.body.blobFile + '.7z'
   const requestSettings = {
     method: 'GET',
@@ -28,12 +28,12 @@ app.post('/code', function (req, res) {
   }
   try {
     if (req.body.blobFile === undefined || req.body.blobFile === '') {
-      console.log('HERE!!!!' + req.body.blobFile)
+      console.log('!!! Empty request' + req.body.blobFile)
       res.render('index', {
         errorMessage: 'Please enter a code.'
       })
     } else {
-      console.log(fileName);
+      console.log('File name is ' + fileName);
       request(requestSettings, function (err, response) {
         if (err) return console.log(err)
         if (response.statusCode !== 200) {
@@ -43,7 +43,11 @@ app.post('/code', function (req, res) {
           })
           return
         }
-        res.redirect('/')
+        console.log(`Downloading ${req.body.blobFile}.7z`)
+        res.render('index', {
+          successMessage: `Downloading ${req.body.blobFile}.7z`
+        })
+        return
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName)
         res.send(response.body)
         res.end()

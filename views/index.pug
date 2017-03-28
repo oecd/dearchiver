@@ -16,11 +16,12 @@ html
 								h2 Enter OECD code
 								if errorMessage
 									div.alert.alert-danger #{errorMessage}
+								if successMessage
+									div.alert.alert-success #{successMessage}
 
-
-								form.navbar-form.navbar-left(action='/code' method='post')
+								form.navbar-form.navbar-left(action='' method='post')
 									.col-lg-6
 										.input-group
-											input.form-control(type="text" placeholder="Code goes here ..." name="blobFile" id="blobFile")
+											input.form-control(type='text' placeholder='Code goes here ...' name='blobFile' id='blobFile')
 											span.input-group-btn
-												button.btn.btn-default(type="submit") Go!
+												button.btn.btn-default(type='submit') Go!
