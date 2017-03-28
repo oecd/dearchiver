@@ -43,11 +43,10 @@ app.post('/', function (req, res) {
           })
           return
         }
-        console.log(`Downloading ${req.body.blobFile}.7z`)
-        res.render('index', {
-          successMessage: `Downloading ${req.body.blobFile}.7z`
-        })
-        return
+//        console.log(`Downloading ${req.body.blobFile}.7z`)
+//        res.render('index', {
+//          successMessage: `Downloading ${req.body.blobFile}.7z`
+//        })
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName)
         res.send(response.body)
         res.end()
