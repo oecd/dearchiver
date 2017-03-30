@@ -14,10 +14,15 @@ html
 						.row
 							.col
 								h2 Enter OECD code
-								if errorMessage
-									div.alert.alert-danger #{errorMessage}
-								if successMessage
-									div.alert.alert-success #{successMessage}
+
+								div #{message}
+
+								if message == 'notFound'
+									div.alert.alert-danger The file could not be found!
+								if message == 'emptyCode'
+									div.alert.alert-danger Please enter a code!
+
+								h1 #{url}
 
 								form.navbar-form.navbar-left(action='' method='post')
 									.col-lg-6
