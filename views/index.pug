@@ -2,6 +2,8 @@ html
 	head
 		title= title
 		link(href='/css/bootstrap.min.css' rel='stylesheet' type='text/css')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' type='text/javascript')
+
 	body
 
 	div(class='container theme-showcase' role='main')
@@ -13,16 +15,21 @@ html
 					.jumbotron
 						.row
 							.col
+								div Welcome in the PAC Dearchiver. To get your files back, you need to enter a valid OECD/kappa code, for exemple 102017011.
+
 								h2 Enter OECD code
 
-								div #{message}
-
-								if message == 'notFound'
-									div.alert.alert-danger The file could not be found!
 								if message == 'emptyCode'
 									div.alert.alert-danger Please enter a code!
-
-								h1 #{url}
+								if message == 'notFound'
+									div.alert.alert-danger The code #{code} is not valid... Please, check!
+								if message == 'success'
+									div.alert.alert-success Downloading #{fileName}...
+									script.
+										var url = !{JSON.stringify(url)}
+										$( document ).ready(function() {
+											alert('I must download ' + url);
+										});
 
 								form.navbar-form.navbar-left(action='' method='post')
 									.col-lg-6

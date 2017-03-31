@@ -1,6 +1,5 @@
-#Installer jquery
-#$.get(url)
-
+//#$.get(url)
+'use strict';
 const bodyParser = require('body-parser')
 require('dotenv').config({path: './_env'})
 const express = require('express')
@@ -16,6 +15,15 @@ app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+// require("jsdom").env("", function(err, window) {
+// 	if (err) {
+// 		console.error(err);
+// 		return;
+// 	}
+//
+// 	var $ = require("jquery")(window);
+// });
+
 app.get('/', function (req, res) {
   res.render('index', {
     title: 'PAC Dearchiver',
@@ -23,15 +31,13 @@ app.get('/', function (req, res) {
   })
 })
 
-
 app.post('/', function (req, res) {
   const fileName = req.body.blobFile + '.7z'
+  const fileUrl = url + fileName
+  let messageCode
   let resObject
 
   console.log(`DIS MOI : ${JSON.stringify(req.body)}`)
-
-  let messageCode
-  const fileUrl = url + fileName
 
   try {
     if (req.body.blobFile === undefined || req.body.blobFile === '') {
@@ -48,11 +54,13 @@ app.post('/', function (req, res) {
         }
         resObject = {
           message: messageCode,
-          url: fileUrl
+          url: fileUrl,
+          fileName: fileName,
+          code: `${req.body.blobFile}`
         }
+        res.render('index', resObject)
       })
     }
-    res.render('index', resObject)
   } catch (e) {
     console.log(e)
   }
