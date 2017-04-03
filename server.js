@@ -14,7 +14,7 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {mode: 'allow'}));
+// app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {mode: 'allow'}));
 
 app.get('/', function (req, res) {
   res.render('index', {
