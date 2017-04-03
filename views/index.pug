@@ -2,7 +2,7 @@ html
 	head
 		title= title
 		link(href='/css/bootstrap.min.css' rel='stylesheet' type='text/css')
-		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' type='text/javascript')
+		script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' type='text/javascript')
 
 	body
 
@@ -20,15 +20,24 @@ html
 								h2 Enter OECD code
 
 								if message == 'emptyCode'
-									div.alert.alert-danger Please enter a code!
+									div.alert.alert-danger(transitionEnd='hide 2s') Please enter a code!
+									script.
+										$( document ).ready(function() {
+											$('div.alert-danger').fadeTo(2000, 500).slideUp(500);
+										});
 								if message == 'notFound'
 									div.alert.alert-danger The code #{code} is not valid... Please, check!
+									script.
+										$( document ).ready(function() {
+											$('div.alert-danger').fadeTo(2000, 500).slideUp(500);
+										});
 								if message == 'success'
 									div.alert.alert-success Downloading #{fileName}...
 									script.
 										var url = !{JSON.stringify(url)}
 										$( document ).ready(function() {
-											alert('I must download ' + url);
+											window.location.href = url;
+											$('div.alert-success').fadeTo(2000, 500).slideUp(500);
 										});
 
 								form.navbar-form.navbar-left(action='' method='post')
