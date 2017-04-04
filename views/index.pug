@@ -26,7 +26,7 @@ html
 
 							.row
 								h2 Enter OECD code
-								
+
 							.row
 								form.navbar-form.navbar-left(action='' method='post')
 									.col-lg-12
@@ -34,7 +34,7 @@ html
 											input.form-control(type='text' placeholder='Code goes here ...' name='blobFile' id='blobFile')
 											span.input-group-btn
 												button.btn.btn-default(type='submit') Go!
-												
+
 							.row
 								div#messageContainer(style="height: 2em")
 									if message == 'emptyCode'
@@ -44,4 +44,5 @@ html
 									if message == 'success'
 										div.alert.alert-success Downloading #{fileName}...
 										script.
-											window.location.href = !{url}
+											var url = !{JSON.stringify(url)}
+											window.location.href = url
