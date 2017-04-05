@@ -64,8 +64,8 @@ app.post('/', function (req, res) {
 })
 
 app.use(function(err, req, res, _next) {
-  const getIp = '78.41.128.14:47172'
-  //const getIp = req.header('x-forwarded-for')
+  //const getIp = '78.41.128.14:47172'
+  const getIp = req.header('x-forwarded-for')
   const resError = {
     title: 'Access denied',
     error: err
