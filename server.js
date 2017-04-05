@@ -15,7 +15,7 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {mode: 'allow'}));
+app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {mode: 'allow', allowedHeaders: ['x-forwarded-for']}));
 
 app.get('/', function (req, res) {
   res.render('index', {
@@ -60,17 +60,18 @@ app.post('/', function (req, res) {
 })
 
 app.use(function(err, req, res, _next) {
-  console.log('Error handler', err);
+  console.log('Error handler', err)
   if(err instanceof IpDeniedError){
-    res.status(401);
+    res.status(401)
   }else{
-    res.status(err.status || 500);
+    res.status(err.status || 500)
   }
   res.render('error', {
     title: 'IP not allowed',
+    showClientIP: req.header('x-forwarded-for') || req.connection.remoteAddress,
     error: err
-  });
-});
+  })
+})
 
 app.listen(port, function () {
   console.log(`Dearchiver is now listening on port ${port}!`)

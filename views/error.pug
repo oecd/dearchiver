@@ -15,13 +15,13 @@ html
 							.row
 								h2.text-center
 									span(class='glyphicon glyphicon-exclamation-sign' aria-hidden='true')
-									span  Access forbidden
+									span  Access denied
 
 							.row
 								div(style="height: 2em")
-									div.alert.alert-danger Your IP is not allowed to access this site.
+									div.alert.alert-danger Your IP address (#{showClientIP}) is not allowed to access this site.
 										a.alert-link(href='http://www.oecd.org/')  Click here
-										span  to visit the OECD website.
+										span  to visit OECD website.
 
 							.row
 								h2
