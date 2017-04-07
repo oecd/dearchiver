@@ -24,8 +24,7 @@ app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
 
 app.use(function(err, req, res, _next) {
   if (err instanceof IpDeniedError) {
-    const rejectIp = '78.41.128.14:47172'
-//    const rejectIp = req.header('x-forwarded-for') || req.ip
+    const rejectIp = req.header('x-forwarded-for') || req.ip
     console.log('[error mode: ip = ' + rejectIp + ']')
       if (rejectIp.substr(0, 7) == '::ffff:') {
         const trimIp = rejectIp.substr(7)
