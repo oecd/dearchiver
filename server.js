@@ -15,12 +15,12 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
-  log: true,
-  logLevel: 'all',
-  mode: 'allow',
-  allowedHeaders: ['x-forwarded-for']
-}));
+// app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
+//   log: true,
+//   logLevel: 'all',
+//   mode: 'allow',
+//   allowedHeaders: ['x-forwarded-for']
+// }));
 
 // error handling comes after all other app.use instructions
 // we will end up inside here whenever there is an error encountered
