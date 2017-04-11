@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 const bodyParser = require('body-parser')
 require('dotenv').config({path: './_env'})
 const express = require('express')
-const ipfilter = require('express-ipfilter').IpFilter;
-const IpDeniedError = require('express-ipfilter').IpDeniedError;
+const ipfilter = require('express-ipfilter').IpFilter
+const IpDeniedError = require('express-ipfilter').IpDeniedError
 const path = require('path')
 const request = require('request')
 
@@ -15,18 +15,18 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-// app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
-//   log: true,
-//   logLevel: 'all',
-//   mode: 'allow',
-//   allowedHeaders: ['x-forwarded-for']
-// }));
+app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
+  log: true,
+  logLevel: 'all',
+  mode: 'allow',
+  allowedHeaders: ['x-forwarded-for']
+}))
 
 // error handling comes after all other app.use instructions
 // we will end up inside here whenever there is an error encountered
 // while handling the request.  in our case we're particularly interested
 // in the IpDeniedError that is being thrown by the ipfilter module
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // http://expressjs.com/en/guide/error-handling.html
   if (res.headersSent) return next(err)
 
