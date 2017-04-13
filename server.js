@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 const bodyParser = require('body-parser')
 require('dotenv').config({path: './_env'})
 const express = require('express')
-const ipfilter = require('../express-ipfilter').IpFilter;
-const IpDeniedError = require('../express-ipfilter').IpDeniedError;
+const ipfilter = require('express-ipfilter').IpFilter
+const IpDeniedError = require('express-ipfilter').IpDeniedError
 const path = require('path')
 const request = require('request')
 
@@ -44,7 +44,7 @@ function getAzureIp(req) {
 // we will end up inside here whenever there is an error encountered
 // while handling the request.  in our case we're particularly interested
 // in the IpDeniedError that is being thrown by the ipfilter module
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // http://expressjs.com/en/guide/error-handling.html
   if (res.headersSent) return next(err)
 
