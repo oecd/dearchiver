@@ -2,8 +2,8 @@
 const bodyParser = require('body-parser')
 require('dotenv').config({path: './_env'})
 const express = require('express')
-const ipfilter = require('express-ipfilter').IpFilter;
-const IpDeniedError = require('express-ipfilter').IpDeniedError;
+const ipfilter = require('../express-ipfilter').IpFilter;
+const IpDeniedError = require('../express-ipfilter').IpDeniedError;
 const path = require('path')
 const request = require('request')
 
@@ -15,12 +15,30 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-// app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
-//   log: true,
-//   logLevel: 'all',
-//   mode: 'allow',
-//   allowedHeaders: ['x-forwarded-for']
-// }));
+app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
+  log: true,
+  logLevel: 'all',
+  mode: 'allow',
+  allowedHeaders: ['x-forwarded-for'],
+  detectIp: getAzureIp
+}));
+
+// we need to use our own detection algorithm as Azure adds a port
+// number to the IP address, and the used ip detection module 'ip'
+// gets confused when it receives an ipv4 address with a port.
+function getAzureIp(req) {
+  const ipAddress = req.headers['x-forwarded-for']
+    ? req.headers['x-forwarded-for'].split(',')[0]
+    : req.connection.remoteAddress
+
+  if (!ipAddress) return ''
+
+  // do some naive IP address matching, just to exclude IPv6 addresses
+  if (ipAddress.match(/(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)/))
+    return ipAddress.split(':')[0]
+
+  return ipAddress
+}
 
 // error handling comes after all other app.use instructions
 // we will end up inside here whenever there is an error encountered
@@ -32,10 +50,6 @@ app.use(function(err, req, res, next) {
 
   if (err instanceof IpDeniedError) {
     const rejectIp = req.ip || req.header('x-forwarded-for')
-    console.log(`req.ip: ${req.ip}`)
-    console.log(`forw.ip: ${req.header('x-forwarded-for')}`)
-    console.log(`rejectIp: ${rejectIp}`)
-    console.log(`whitelist: ${process.env.IP_WHITELIST}`)
     res.status(403).render('error', {
       title: 'Access denied',
       showRejectedIp: req.ip || req.header('x-forwarded-for')
