@@ -12,37 +12,33 @@ html
 			})
 
 	body
-
-	div(class='container theme-showcase' role='main')
+		div.container-fluid(style="padding-top: 2em")
 			.row
-				.col-md-6.col-md-offset-3
-					|
-					h1 Dearchiver
-					|
+				.col-lg-6.col-lg-offset-3
 					.jumbotron
-						.col
-							.row
-								div.well Welcome to the PAC Dearchiver. To get your files back, you need to enter a valid OECD/Kappa code.
+						h2 Dearchiver
+						br
+						p Welcome to the PAC Dearchiver. To get your files back, you need to enter a valid OECD/Kappa code. For example, #[mark 012003083].
+						
+						p Note that this #[mark only works for POD files] at the moment, but we're working on a version that will also dearchive prepress files.
 
-							.row
-								h2 Enter OECD code
+						form.navbar-form.navbar-left(action='' method='post')
+							.input-group.input-group-lg
+								input.form-control(type='text' placeholder='Enter an OECD code ...' name='blobFile' id='blobFile')
+								span.input-group-btn
+									button.btn.btn-default(type='submit') Go!
 
-							.row
-								form.navbar-form.navbar-left(action='' method='post')
-									.col-lg-12
-										.input-group.input-group-lg
-											input.form-control(type='text' placeholder='Code goes here ...' name='blobFile' id='blobFile')
-											span.input-group-btn
-												button.btn.btn-default(type='submit') Go!
-
-							.row
-								div#messageContainer(style="height: 2em")
-									if message == 'emptyCode'
-										div.alert.alert-danger Please enter a code!
-									if message == 'notFound'
-										div.alert.alert-danger The code #{code} is not valid... Please, check!
-									if message == 'success'
-										div.alert.alert-success Downloading #{fileName}...
-										script.
-											var url = !{JSON.stringify(url)}
-											window.location.href = url
+						br
+						br
+						br
+						br
+						div#messageContainer(style="height: 2em;")
+							if message == 'emptyCode'
+								div.alert.alert-danger Please enter a code!
+							if message == 'notFound'
+								div.alert.alert-danger The code #{code} is not valid... Please, check!
+							if message == 'success'
+								div.alert.alert-success Downloading #{fileName}...
+								script.
+									var url = !{JSON.stringify(url)}
+									window.location.href = url

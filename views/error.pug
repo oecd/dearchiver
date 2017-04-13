@@ -3,25 +3,11 @@ html
 		title= title
 		link(href='/css/bootstrap.min.css' rel='stylesheet' type='text/css')
 	body
-
-	div(class='container theme-showcase' role='main')
+		.container-fluid.theme-showcase(role='main')
 			.row
 				.col-md-6.col-md-offset-3
-					|
-					h1
-					|
-					.jumbotron
-						.col
-							.row
-								h2.text-center
-									span(class='glyphicon glyphicon-exclamation-sign' aria-hidden='true')
-									span  Access denied
-
-							.row
-								div(style="height: 2em")
-									div.alert.alert-danger Your IP address (#{showRejectedIp}) is not allowed to access this site.
-										a.alert-link(href='http://www.oecd.org/')  Click here
-										span  to visit OECD website.
-
-							.row
-								h2
+					h2.text-center
+						span.glyphicon.glyphicon-exclamation-sign(aria-hidden='true')
+						span  Access denied
+					div(style="height: 2em")
+						.alert.alert-danger Your IP address (#{showRejectedIp}) is not allowed to access this site.
