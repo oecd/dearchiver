@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 const bodyParser = require('body-parser')
 require('dotenv').config({path: './_env'})
 const express = require('express')
-const IpDeniedError = require('express-ipfilter').IpDeniedError;
-const ipfilter = require('express-ipfilter').IpFilter;
+const ipfilter = require('express-ipfilter').IpFilter
+const IpDeniedError = require('express-ipfilter').IpDeniedError
 const path = require('path')
 const request = require('request')
 
@@ -19,30 +19,43 @@ app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
   log: true,
   logLevel: 'all',
   mode: 'allow',
-  allowedHeaders: ['x-forwarded-for']
+  allowedHeaders: ['x-forwarded-for'],
+  detectIp: getAzureIp
 }));
 
-app.use(function(err, req, res, _next) {
+// we need to use our own detection algorithm as Azure adds a port
+// number to the IP address, and the used ip detection module 'ip'
+// gets confused when it receives an ipv4 address with a port.
+function getAzureIp(req) {
+  const ipAddress = req.headers['x-forwarded-for']
+    ? req.headers['x-forwarded-for'].split(',')[0]
+    : req.connection.remoteAddress
+
+  if (!ipAddress) return ''
+
+  // do some naive IP address matching, just to exclude IPv6 addresses
+  if (ipAddress.match(/(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)/))
+    return ipAddress.split(':')[0]
+
+  return ipAddress
+}
+
+// error handling comes after all other app.use instructions
+// we will end up inside here whenever there is an error encountered
+// while handling the request.  in our case we're particularly interested
+// in the IpDeniedError that is being thrown by the ipfilter module
+app.use(function (err, req, res, next) {
+  // http://expressjs.com/en/guide/error-handling.html
+  if (res.headersSent) return next(err)
+
   if (err instanceof IpDeniedError) {
-    const rejectIp = req.header('x-forwarded-for') || req.ip
-    console.log('[error mode: ip = ' + rejectIp + ']')
-      if (rejectIp.substr(0, 7) == '::ffff:') {
-        const trimIp = rejectIp.substr(7)
-        console.log('[trim ip = ' + trimIp + ']')
-        res.render('error', {
-          title: 'Access denied',
-          showRejectedIp: trimIp
-        })
-      }else if (rejectIp !== undefined) {
-        const trimIp = rejectIp.split(':')[0]
-        console.log('[trim ip = ' + trimIp + ']')
-         res.render('error', {
-           title: 'Access denied',
-           showRejectedIp: trimIp
-         })
-      }
-  }else {
-    console.log('[I dont know what am I suppose to do here!]')
+    const rejectIp = req.ip || req.header('x-forwarded-for')
+    res.status(403).render('error', {
+      title: 'Access denied',
+      showRejectedIp: req.ip || req.header('x-forwarded-for')
+    })
+  } else {
+    next(err)
   }
 })
 
@@ -57,12 +70,10 @@ app.post('/', function (req, res) {
   const fileName = req.body.blobFile + '.7z'
   const fileUrl = url + fileName
   const resObject = {
-      url: fileUrl,
-      fileName: fileName,
-      code: `${req.body.blobFile}`
-    }
-
-  console.log(`DIS MOI : ${JSON.stringify(req.body)}`)
+    url: fileUrl,
+    fileName: fileName,
+    code: `${req.body.blobFile}`
+  }
 
   try {
     if (req.body.blobFile === undefined || req.body.blobFile === '') {
