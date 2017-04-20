@@ -7,8 +7,10 @@ const IpDeniedError = require('express-ipfilter').IpDeniedError
 const path = require('path')
 const request = require('request')
 
-const url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME}/`
 const port = process.env.PORT || 3000
+const userDownloadFolder = ('C:/Users/' + process.env.USERNAME + '/Downloads')
+
+console.log(userDownloadFolder)
 
 const app = express()
 app.set('view engine', 'pug')
@@ -67,12 +69,34 @@ app.get('/', function (req, res) {
 })
 
 app.post('/', function (req, res) {
-  const fileName = req.body.blobFile + '.7z'
+  console.log('containerType = ' + req.body.containerType)
+  // defining the url depending on the choice pod or prepress
+  // if pod, azure container is archives-pod
+  // if prepress, azure container is archives-prepress-0000
+
+  let url
+  let fileName
+  if (req.body.containerType === 'prepress') {
+    const dirCode = req.body.blobFile.substring(0, 2)
+    const yearCode = req.body.blobFile.substring(2, 6)
+    const abbrYearCode = req.body.blobFile.substring(4, 6)
+    const familyCode = req.body.blobFile.substring(6, 8)
+    const languageCode = req.body.blobFile.substring(8, 9)
+
+    url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/`
+    fileName = dirCode + abbrYearCode + familyCode + '-' + languageCode + '.7z'
+
+  }else {
+    url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}/`
+    fileName = req.body.blobFile + '.7z'
+  }
+
   const fileUrl = url + fileName
   const resObject = {
     url: fileUrl,
     fileName: fileName,
-    code: `${req.body.blobFile}`
+    code: `${req.body.blobFile}`,
+    userDownloadFolder: userDownloadFolder
   }
 
   try {

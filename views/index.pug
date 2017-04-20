@@ -18,15 +18,38 @@ html
 					.jumbotron
 						h2 Dearchiver
 						br
-						p Welcome to the PAC Dearchiver. To get your files back, you need to enter a valid OECD/Kappa code. For example, #[mark 012003083].
-						
-						p Note that this #[mark only works for POD files] at the moment, but we're working on a version that will also dearchive prepress files.
+						p Welcome to the PAC Dearchiver. To get your files back, you need a valid OECD/Kappa code.
 
-						form.navbar-form.navbar-left(action='' method='post')
+						p First, type your code as follow:&nbsp;
+							kbd 012003083
+							span .
+
+						p Then, click the button to get the archive you need:
+
+						p
+							span.glyphicon.glyphicon-hand-right(aria-hidden='true')
+							span &nbsp;&nbsp;
+							kbd go for POD!
+							span  for the print-on-demand files.
+
+							p
+								span.glyphicon.glyphicon-hand-right(aria-hidden='true')
+								span &nbsp;&nbsp;
+								kbd go for PREPRESS!
+								span  for the production files.
+
+							p Finally, the archive (
+								strong 7z format
+								span ) is available on your
+								strong  local downloads
+								span  folder.
+
+						form.navbar-form(action='' method='post')
 							.input-group.input-group-lg
 								input.form-control(type='text' placeholder='Enter an OECD code ...' name='blobFile' id='blobFile')
 								span.input-group-btn
-									button.btn.btn-default(type='submit') Go!
+									button.btn.btn-primary(type='submit' name='containerType' value='pod') go for POD!
+									button.btn.btn-info(type='submit' name='containerType' value='prepress') go for PREPRESS!
 
 						br
 						br
@@ -36,7 +59,7 @@ html
 							if message == 'emptyCode'
 								div.alert.alert-danger Please enter a code!
 							if message == 'notFound'
-								div.alert.alert-danger The code #{code} is not valid... Please, check!
+								div.alert.alert-danger The code #{code} is not valid or doesn't exist in the archive... Please, check!
 							if message == 'success'
 								div.alert.alert-success Downloading #{fileName}...
 								script.
