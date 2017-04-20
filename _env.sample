@@ -5,3 +5,4 @@ HTTP_PROXY=Do I really need to explain this?
 HTTPS_PROXY=And this?
 NODE_TLS_REJECT_UNAUTHORIZED=0
 IP_WHITELIST=The IPs you want to allow to access the application
+VERSION=The version of the app (ex 1.0)

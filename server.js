@@ -10,8 +10,6 @@ const request = require('request')
 const port = process.env.PORT || 3000
 const userDownloadFolder = ('C:/Users/' + process.env.USERNAME + '/Downloads')
 
-console.log(userDownloadFolder)
-
 const app = express()
 app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
@@ -69,7 +67,6 @@ app.get('/', function (req, res) {
 })
 
 app.post('/', function (req, res) {
-  console.log('containerType = ' + req.body.containerType)
   // defining the url depending on the choice pod or prepress
   // if pod, azure container is archives-pod
   // if prepress, azure container is archives-prepress-0000
