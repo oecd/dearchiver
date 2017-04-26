@@ -8,7 +8,9 @@ const path = require('path')
 const request = require('request')
 
 const port = process.env.PORT || 3000
-const userDownloadFolder = ('C:/Users/' + process.env.USERNAME + '/Downloads')
+
+const jsonObj = require("./package.json")
+const appVersion = (jsonObj.version)
 
 const app = express()
 app.set('view engine', 'pug')
@@ -62,7 +64,8 @@ app.use(function (err, req, res, next) {
 app.get('/', function (req, res) {
   res.render('index', {
     title: 'PAC Dearchiver',
-    inputFileName: 'blobFile'
+    inputFileName: 'blobFile',
+    appVersion: appVersion
   })
 })
 
