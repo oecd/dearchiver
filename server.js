@@ -96,7 +96,6 @@ app.post('/', function (req, res) {
     url: fileUrl,
     fileName: fileName,
     code: `${req.body.blobFile}`,
-    userDownloadFolder: userDownloadFolder
   }
 
   try {
