@@ -14,11 +14,18 @@ const jsonObj = require("./package.json")
 const appVersion = (jsonObj.version)
 
 // whitelist the IP addresses from us and monitoring locations
-const whitelistedIPs = ['::1', '127.0.0.1', process.env.IP_WHITELIST]
-  .concat(fs.readFileSync(path.join(__dirname, process.env.IP_WHITELIST_FILE))
-  .toString()
-  .split('\n')
-  .filter((line) => { return line.trim() != '' }))
+
+let whitelistedIPs = ['::1', '127.0.0.1', process.env.IP_WHITELIST].concat(
+  fs.readFileSync(path.join(__dirname, process.env.IP_WHITELIST_FILE))
+    .toString()
+    .split('\r')
+    .filter((line) => { return line.trim() != '' })
+    .map((line) => { return line.trim() })
+)
+
+if (process.env.NODE_DEBUG) {
+  console.log(`whitelisted IPs: ${JSON.stringify(whitelistedIPs)}`)
+}
 
 const app = express()
 app.set('view engine', 'pug')
