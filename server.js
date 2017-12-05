@@ -1,10 +1,11 @@
 'use strict'
+const fs = require('fs')
+const path = require('path')
 const bodyParser = require('body-parser')
 require('dotenv').config({path: './_env'})
 const express = require('express')
 const ipfilter = require('express-ipfilter').IpFilter
 const IpDeniedError = require('express-ipfilter').IpDeniedError
-const path = require('path')
 const request = require('request')
 
 const port = process.env.PORT || 3000
@@ -12,12 +13,19 @@ const port = process.env.PORT || 3000
 const jsonObj = require("./package.json")
 const appVersion = (jsonObj.version)
 
+// whitelist the IP addresses from us and monitoring locations
+const whitelistedIPs = ['::1', '127.0.0.1', process.env.IP_WHITELIST]
+  .concat(fs.readFileSync(path.join(__dirname, process.env.IP_WHITELIST_FILE))
+  .toString()
+  .split('\n')
+  .filter((line) => { return line.trim() != '' }))
+
 const app = express()
 app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(ipfilter(['::1', '127.0.0.1', process.env.IP_WHITELIST], {
+app.use(ipfilter(whitelistedIPs, {
   log: true,
   logLevel: 'all',
   mode: 'allow',
