@@ -1,8 +1,0 @@
-AZURE_ACCESSKEY=The key to access your Azure account
-AZURE_STORAGEACCOUNT=The name of your storage account (http://[storageAccountName].blob.core.windows.net/
-AZURE_CONTAINERNAME_PREFIX=The prefix name of the blob container
-HTTP_PROXY=Do I really need to explain this?
-HTTPS_PROXY=And this?
-NODE_TLS_REJECT_UNAUTHORIZED=0
-IP_WHITELIST=The IPs you want to allow to access the application
-IP_WHITELIST_FILE=
