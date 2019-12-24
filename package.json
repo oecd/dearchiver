@@ -1,6 +1,6 @@
 {
   "name": "azure-dearchiver",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Get blob from azure.",
   "main": "server.js",
   "scripts": {
