@@ -4,7 +4,8 @@
   "description": "Get blob from azure.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "author": "",
   "license": "ISC",
@@ -13,12 +14,14 @@
     "bootstrap": "^3.3.7",
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
-    "express-ipfilter": "^0.2.4",
+    "express-ipfilter": "^1.1.1",
     "pug": "^2.0.0-beta11",
     "request": "^2.81.0",
     "webpack": "^2.3.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^24.9.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/buzzatwork/azure-dearchiver.git"
