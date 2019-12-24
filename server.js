@@ -90,34 +90,27 @@ app.post('/', function (req, res) {
   // if pod, azure container is archives-pod
   // if prepress, azure container is archives-prepress-0000
 
-  const oldOecdCode = new RegExp(/[0-9]{9}/g);
-  const newOecdCode = new RegExp(/([a-z]{3,4})-([0-9]{4})-([0-9]{1,5})-([a-z]{2})/g);
-
   let a, url, fileName, dirCode, yearCode, abbrYearCode, familyCode, languageCode
   if (req.body.containerType === 'prepress') {
-    if (oldOecdCode.test(req.body.blobFile)) {
-      dirCode = req.body.blobFile.substring(0, 2)
-      yearCode = req.body.blobFile.substring(2, 6)
-      abbrYearCode = req.body.blobFile.substring(4, 6)
-      familyCode = req.body.blobFile.substring(6, 8)
-      languageCode = req.body.blobFile.substring(8, 9)
-      console.log(`dircode: ${dirCode} - yearcode: ${yearCode} - familycode: ${familyCode} - languagecode: ${languageCode} - abb: ${abbrYearCode}`);
+    if (checkCode(req.body.blobFile)) {
+      const o = getInfoFromCode(req.body.blobFile)
+      if (o) {
+        dirCode = o.dirCode
+        yearCode = o.yearCode
+        familyCode = o.familyCode
+        languageCode = o.langCode
+        abbrYearCode = yearCode.substring(2)
+        console.log(`dircode: ${dirCode} - yearcode: ${yearCode} - familycode: ${familyCode} - languagecode: ${languageCode} - abb: ${abbrYearCode}`);
+        url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/`
+        fileName = dirCode + abbrYearCode + familyCode + '-' + languageCode + '.7z'    
+      } else {
+        // no object returned, problem with code ...
+      }
     } else {
-      const myString = req.body.blobFile;
-      let match = newOecdCode.exec(myString);
-      [a, dirCode, yearCode, familyCode, languageCode] = match
-      dirCode = match[1]
-      yearCode = match[2]
-      abbrYearCode = yearCode.substring(2)
-      familyCode = match[3]
-      languageCode = match[4]
-      console.log(`${JSON.stringify(match)}`)
+      // code doesn't match ...
     }
-    
-    url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/`
-    fileName = dirCode + abbrYearCode + familyCode + '-' + languageCode + '.7z'
 
-  }else {
+  } else {
     url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}/`
     fileName = req.body.blobFile + '.7z'
   }
