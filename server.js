@@ -7,6 +7,7 @@ const express = require('express')
 const ipfilter = require('express-ipfilter').IpFilter
 const IpDeniedError = require('express-ipfilter').IpDeniedError
 const request = require('request')
+const { checkCode, getInfoFromCode } = require('./utils')
 
 const port = process.env.PORT || 3000
 
