@@ -100,8 +100,12 @@ app.post('/', function (req, res) {
       abbrYearCode = req.body.blobFile.substring(4, 6)
       familyCode = req.body.blobFile.substring(6, 8)
       languageCode = req.body.blobFile.substring(8, 9)
-      console.log(`dircode: ${dirCode} - yearcode: ${yearCode} - familycode: ${familyCode} - languagecode: ${languageCode} - abb: ${abbrYearCode}`);
-    } else {
+      // console.log(`dircode: ${dirCode} - yearcode: ${yearCode} - familycode: ${familyCode} - languagecode: ${languageCode} - abb: ${abbrYearCode}`);
+
+      url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/`
+      fileName = dirCode + abbrYearCode + familyCode + '-' + languageCode + '.7z'
+  
+      } else {
       const myString = req.body.blobFile;
       let match = newOecdCode.exec(myString);
       [a, dirCode, yearCode, familyCode, languageCode] = match
@@ -110,12 +114,15 @@ app.post('/', function (req, res) {
       abbrYearCode = yearCode.substring(2)
       familyCode = match[3]
       languageCode = match[4]
-      console.log(`${JSON.stringify(match)}`)
-    }
-    
-    url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/`
-    fileName = dirCode + abbrYearCode + familyCode + '-' + languageCode + '.7z'
+      // console.log(`${JSON.stringify(match)}`)
 
+      // console.log(`https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/` + dirCode + '-' + yearCode + '-' + familyCode + '-' + languageCode + '.7z')
+
+      url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/`
+      fileName = dirCode + '-' + yearCode + '-' + familyCode + '-' + languageCode + '.7z'
+  
+      }
+    
   }else {
     url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}/`
     fileName = req.body.blobFile + '.7z'
