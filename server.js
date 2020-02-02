@@ -8,6 +8,7 @@ const ipfilter = require('express-ipfilter').IpFilter
 const IpDeniedError = require('express-ipfilter').IpDeniedError
 const request = require('request')
 const { checkCode, getInfoFromCode } = require('./utils')
+const {download, blobExists} = require('./azure-download')
 
 const port = process.env.PORT || 3000
 
@@ -85,12 +86,23 @@ app.get('/', function (req, res) {
   })
 })
 
+app.get('/download/:container/:blob', function(req, res) {
+  const blobName = req.params.blob
+  const containerName = req.params.container
+  res.set({
+    'Content-type': 'application/octet-stream',
+    'Content-disposition': `attachment; filename=${blobName}`,
+    'Content-Transfer-Encoding': 'binary'
+  })
+  download(containerName, blobName, res)
+})
+
 app.post('/', function (req, res) {
   // defining the url depending on the choice pod or prepress
   // if pod, azure container is archives-pod
   // if prepress, azure container is archives-prepress-0000
 
-  let a, url, fileName, dirCode, yearCode, abbrYearCode, familyCode, languageCode
+  let a, blobName, containerName, dirCode, yearCode, abbrYearCode, familyCode, languageCode
   if (req.body.containerType === 'prepress') {
     if (checkCode(req.body.blobFile)) {
       const o = getInfoFromCode(req.body.blobFile)
@@ -101,18 +113,14 @@ app.post('/', function (req, res) {
         languageCode = o.langCode
         abbrYearCode = yearCode.substring(2)
         console.log(`dircode: ${dirCode} - yearcode: ${yearCode} - familycode: ${familyCode} - languagecode: ${languageCode} - abb: ${abbrYearCode}`);
-        url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}/`
-        fileName = dirCode + abbrYearCode + familyCode + '-' + languageCode + '.7z'    
+        containerName = `${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}`
+        blobName = `${dirCode}${abbrYearCode}${familyCode}-${languageCode}.7z`
       } else {
         // no object returned, problem with code ...
       }
     } else {
       // code doesn't match ...
     }
-
-  } else {
-    url = `https://${process.env.AZURE_STORAGEACCOUNT}.blob.core.windows.net/${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}/`
-    fileName = req.body.blobFile + '.7z'
   }
 
   const fileUrl = url + fileName
@@ -129,17 +137,12 @@ app.post('/', function (req, res) {
       res.render('index', resObject)
     } else {
       // test existence of file
-      request.head(fileUrl, function (err, response) {
-        if (err) return console.log(err)
-        if (response.statusCode !== 200) {
-          console.log(`!!! Unknown code ${req.body.blobFile}.`)
-          resObject.message = 'notFound'
-        } else {
-          resObject.message = 'success'
-        }
-        console.log(resObject)
-        res.render('index', resObject)
-      })
+      if (blobExists(containerName, blobName)) {
+        resObject.message = 'success'
+      } else {
+        resObject.message = 'notFound'
+      }
+      res.render('index', resObject)
     }
   } catch (e) {
     console.log(e)
