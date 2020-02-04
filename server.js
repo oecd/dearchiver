@@ -7,8 +7,8 @@ const express = require('express')
 const ipfilter = require('express-ipfilter').IpFilter
 const IpDeniedError = require('express-ipfilter').IpDeniedError
 const request = require('request')
-const { checkCode, getInfoFromCode } = require('./utils')
-const {download, blobExists} = require('./azure-download')
+const { checkCode, getInfoFromCode, formatCode } = require('./utils')
+const {downloadBlob, blobExists} = require('./azure-download')
 
 const port = process.env.PORT || 3000
 
@@ -87,14 +87,20 @@ app.get('/', function (req, res) {
 })
 
 app.get('/download/:container/:blob', function(req, res) {
-  const blobName = req.params.blob
   const containerName = req.params.container
-  res.set({
-    'Content-type': 'application/octet-stream',
-    'Content-disposition': `attachment; filename=${blobName}`,
-    'Content-Transfer-Encoding': 'binary'
-  })
-  download(containerName, blobName, res)
+  const blobName = req.params.blob
+  console.log(`Attempting to download ${containerName}/${blobName} ...`)
+  try {
+    res.set({
+      'Content-type': 'application/octet-stream',
+      'Content-disposition': `attachment; filename=${blobName}`,
+      'Content-Transfer-Encoding': 'binary'
+    })
+    // pipe output directly into the response object
+    downloadBlob(containerName, blobName, res)
+  } catch(e) {
+    console.log(e)
+  }
 })
 
 app.post('/', function (req, res) {
@@ -102,31 +108,24 @@ app.post('/', function (req, res) {
   // if pod, azure container is archives-pod
   // if prepress, azure container is archives-prepress-0000
 
-  let a, blobName, containerName, dirCode, yearCode, abbrYearCode, familyCode, languageCode
+  let blobName, containerName
   if (req.body.containerType === 'prepress') {
     if (checkCode(req.body.blobFile)) {
       const o = getInfoFromCode(req.body.blobFile)
       if (o) {
-        dirCode = o.dirCode
-        yearCode = o.yearCode
-        familyCode = o.familyCode
-        languageCode = o.langCode
-        abbrYearCode = yearCode.substring(2)
-        console.log(`dircode: ${dirCode} - yearcode: ${yearCode} - familycode: ${familyCode} - languagecode: ${languageCode} - abb: ${abbrYearCode}`);
-        containerName = `${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${yearCode}`
-        blobName = `${dirCode}${abbrYearCode}${familyCode}-${languageCode}.7z`
-      } else {
-        // no object returned, problem with code ...
+        containerName = `${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${o.yearCode}`
+        blobName = formatCode(req.body.blobFile)
       }
-    } else {
-      // code doesn't match ...
     }
+  } else {
+    // containerType is 'pod'
   }
 
-  const fileUrl = url + fileName
+  console.log('just before resobject\n==================')
+
   const resObject = {
-    url: fileUrl,
-    fileName: fileName,
+    container: containerName || null,
+    blob: blobName || null,
     code: `${req.body.blobFile}`,
     appVersion: appVersion
   }
