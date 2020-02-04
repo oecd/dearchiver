@@ -1,4 +1,4 @@
-const { getInfoFromCode, checkCode } = require('./utils');
+const { getInfoFromCode, checkCode, isOldCode, isNewCode, formatCode } = require('./utils');
 
 test(`checkCode returns 'false' for bad codes`, () => {
     expect(checkCode('abc')).toBeFalsy();
@@ -45,3 +45,18 @@ test(`getInfoFromCode returns nothing`, () => {
     expect(getInfoFromCode('abc-209-14-d')).toBeFalsy();
     expect(getInfoFromCode('123')).toBeFalsy();
 });
+
+test(`isOldCode test`, () => {
+    expect(isOldCode('112019001')).toBeTruthy()
+    expect(isOldCode('blah-1234-fr')).toBeFalsy()
+})
+
+test(`isNewCode test`, () => {
+    expect(isNewCode('eco-2019-5539-fr')).toBeTruthy()
+    expect(isNewCode('123456')).toBeFalsy()
+})
+
+test(`format code tests`, () => {
+    expect(formatCode('eco-2019-5539-fr')).toBe('eco-2019-5539-fr.7z')
+    expect(formatCode('012003083')).toBe('010308-3.7z')
+})

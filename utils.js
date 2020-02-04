@@ -7,13 +7,26 @@ const checkCode = (code) => {
 }
 
 const getInfoFromCode = (code) => {
-    if (oldOecdCodeRE.test(code)) {
+    if (isOldCode(code)) {
         [a, dirCode, yearCode, familyCode, langCode] = oldOecdCodeRE.exec(code)
         return { dirCode, yearCode, familyCode, langCode };
-    } else if (newOecdCodeRE.test(code)) {
+    } else if (isNewCode(code)) {
         [a, dirCode, yearCode, familyCode, langCode] = newOecdCodeRE.exec(code)
         return { dirCode, yearCode, familyCode, langCode };
     }
 }
+const formatCode = (code) => {
+    const i = getInfoFromCode(code)
+    if (isNewCode(code)) {
+        return `${i.dirCode}-${i.yearCode}-${i.familyCode}-${i.langCode}.7z`
+    } else if (isOldCode(code)) {
+        return `${i.dirCode}${i.yearCode.substring(2, 4)}${i.familyCode}-${i.langCode}.7z`
+    } else {
+        console.log(`should never get here ... but: ${code}`)
+    }
+}
 
-module.exports = { checkCode, getInfoFromCode }
+const isOldCode = (code) => oldOecdCodeRE.test(code)
+const isNewCode = (code) => newOecdCodeRE.test(code)
+
+module.exports = { checkCode, getInfoFromCode, isNewCode, isOldCode, formatCode }
