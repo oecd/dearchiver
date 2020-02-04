@@ -47,7 +47,7 @@ async function downloadBlob(containerName, blobName, stdout = process.stdout) {
         bufferStream.pipe(stdout);
         return true;
     } catch(e) {
-        return Promise.reject(new Error(e))
+        return Promise.reject(e)
     }
 }
 module.exports = {
