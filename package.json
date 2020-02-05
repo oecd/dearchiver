@@ -1,13 +1,13 @@
 {
   "name": "azure-dearchiver",
-  "version": "1.0.2",
-  "description": "Get blob from azure.",
+  "version": "2.0.0",
+  "description": "Download files from Azure Blob Storage",
   "main": "server.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "author": "",
+  "author": "OECD",
   "license": "ISC",
   "dependencies": {
     "@azure/storage-blob": "^12.0.2",
