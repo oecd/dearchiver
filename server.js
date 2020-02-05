@@ -7,7 +7,7 @@ const express = require('express')
 const ipfilter = require('express-ipfilter').IpFilter
 const IpDeniedError = require('express-ipfilter').IpDeniedError
 const request = require('request')
-const { checkCode, getInfoFromCode, formatCode } = require('./utils')
+const { checkCode, getInfoFromCode, formatCode, getAzureIp } = require('./utils')
 const {downloadBlob, blobExists} = require('./azure-download')
 
 const port = process.env.PORT || 3000
@@ -16,7 +16,6 @@ const jsonObj = require("./package.json")
 const appVersion = (jsonObj.version)
 
 // whitelist the IP addresses from us and monitoring locations
-
 let whitelistedIPs = ['::1', '127.0.0.1', process.env.IP_WHITELIST].concat(
   fs.readFileSync(path.join(__dirname, process.env.IP_WHITELIST_FILE))
     .toString()
@@ -41,23 +40,6 @@ app.use(ipfilter(whitelistedIPs, {
   allowedHeaders: ['x-forwarded-for'],
   detectIp: getAzureIp
 }));
-
-// we need to use our own detection algorithm as Azure adds a port
-// number to the IP address, and the used ip detection module 'ip'
-// gets confused when it receives an ipv4 address with a port.
-function getAzureIp(req) {
-  const ipAddress = req.headers['x-forwarded-for']
-    ? req.headers['x-forwarded-for'].split(',')[0]
-    : req.connection.remoteAddress
-
-  if (!ipAddress) return ''
-
-  // do some naive IP address matching, just to exclude IPv6 addresses
-  if (ipAddress.match(/(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)/))
-    return ipAddress.split(':')[0]
-
-  return ipAddress
-}
 
 // error handling comes after all other app.use instructions
 // we will end up inside here whenever there is an error encountered
@@ -103,48 +85,53 @@ app.get('/download/:container/:blob', function(req, res) {
   }
 })
 
-app.post('/', function (req, res) {
+app.post('/', async (req, res) => {
   // defining the url depending on the choice pod or prepress
   // if pod, azure container is archives-pod
   // if prepress, azure container is archives-prepress-0000
+  const containerType = req.body.containerType
+  const blobFile = req.body.blobFile
 
   let blobName, containerName
-  if (req.body.containerType === 'prepress') {
-    if (checkCode(req.body.blobFile)) {
-      const o = getInfoFromCode(req.body.blobFile)
-      if (o) {
-        containerName = `${process.env.AZURE_CONTAINERNAME_PREFIX}${req.body.containerType}-${o.yearCode}`
-        blobName = formatCode(req.body.blobFile)
-      }
-    }
-  } else {
-    // containerType is 'pod'
+  const o = getInfoFromCode(blobFile)
+  if (!checkCode(blobFile) || !o) {
+    res.render('index', { container: null, blob: null, code: blobFile, appVersion, message: 'notFound' })
+    return
   }
 
-  console.log('just before resobject\n==================')
+  if (containerType === 'prepress') {
+    containerName = `${process.env.AZURE_CONTAINERNAME_PREFIX}${containerType}-${o.yearCode}`
+    blobName = formatCode(blobFile)
+  } else if (containerType === 'pod') {
+    containerName = `${process.env.AZURE_CONTAINERNAME_PREFIX}${containerType}`
+    blobName = `${blobFile}.7z`
+  } else {
+    // undefined containerType - this should never happen
+    console.log(`Unknown or new container type: ${containerType}`)
+  }
 
   const resObject = {
-    container: containerName || null,
-    blob: blobName || null,
-    code: `${req.body.blobFile}`,
+    container: containerName,
+    blob: blobName,
+    code: blobFile,
     appVersion: appVersion
   }
 
   try {
-    if (req.body.blobFile === undefined || req.body.blobFile === '') {
-      resObject.message = 'emptyCode'
+    if ((await blobExists(containerName, blobName))) {
+      resObject.message = 'success'
+    } else {
+      resObject.message = 'notFound'
+    }
+    res.render('index', resObject)
+  } catch (e) {
+    if (!e) {
+      console.log('got an exception thrown ...' + e)
+      resObject.message = 'notFound'
       res.render('index', resObject)
     } else {
-      // test existence of file
-      if (blobExists(containerName, blobName)) {
-        resObject.message = 'success'
-      } else {
-        resObject.message = 'notFound'
-      }
-      res.render('index', resObject)
+      console.log(e)
     }
-  } catch (e) {
-    console.log(e)
   }
 })
 
