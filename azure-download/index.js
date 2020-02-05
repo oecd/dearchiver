@@ -27,7 +27,7 @@ async function blobExists(containerName, blobName) {
         }
         return Promise.resolve(true)
     } catch(e) {
-        return Promise.reject(new Error(e))
+        return Promise.reject(e)
     }
 } 
 
