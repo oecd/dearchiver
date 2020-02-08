@@ -1,14 +1,16 @@
 {
   "name": "azure-dearchiver",
-  "version": "1.0.3",
-  "description": "Get blob from azure.",
+  "version": "2.0.0",
+  "description": "Download files from Azure Blob Storage",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
-  "author": "",
+  "author": "OECD",
   "license": "ISC",
   "dependencies": {
+    "@azure/storage-blob": "^12.0.2",
     "body-parser": "^1.17.1",
     "bootstrap": "^3.3.7",
     "dotenv": "^4.0.0",
@@ -18,7 +20,9 @@
     "request": "^2.81.0",
     "webpack": "^2.3.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^24.9.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/buzzatwork/azure-dearchiver.git"

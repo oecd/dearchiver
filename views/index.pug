@@ -4,13 +4,10 @@ html
 		link(href='/css/bootstrap.min.css' rel='stylesheet' type='text/css')
 		script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' type='text/javascript')
 		script.
-			$(document).ready(function() {
-				function hideMessage(selector) {
-					$(selector).fadeTo(2000, 500).slideUp(500)
-				}
-				hideMessage('div.alert')
-			})
-
+			function hideMessage(selector) {
+				$(selector).fadeTo(2000, 500).slideUp(500)
+			}
+			
 	body
 		div.container-fluid(style="padding-top: 2em")
 			.row
@@ -51,7 +48,7 @@ html
 
 							p Finally, the archive (
 								strong 7z format
-								span ) is available on your
+								span ) is available in your
 								strong  local downloads
 								span  folder.
 
@@ -70,9 +67,9 @@ html
 							if message == 'emptyCode'
 								div.alert.alert-danger Please enter a code!
 							if message == 'notFound'
-								div.alert.alert-danger The code #{code} is not valid or doesn't exist in the archive... Please, check!
+								div.alert.alert-danger The code #{code} is not valid or doesn't exist in the archive... Please check!
 							if message == 'success'
-								div.alert.alert-success Downloading #{fileName}...
+								div.alert.alert-success Downloading #{blob} ...
 								script.
-									var url = !{JSON.stringify(url)}
-									window.location.href = url
+									window.location.href = "/download/#{container}/#{blob}"
+									setTimeout(hideMessage('div.alert'), 3000)
