@@ -1,5 +1,4 @@
 require('dotenv').config();
-const stream = require('stream');
 const { BlobServiceClient, StorageSharedKeyCredential } = require("@azure/storage-blob");
 
 // Enter your storage account name and shared key
@@ -29,7 +28,7 @@ async function blobExists(containerName, blobName) {
     } catch(e) {
         return Promise.reject(e)
     }
-} 
+}
 
 async function downloadBlob(containerName, blobName, stdout = process.stdout) {
     try {
@@ -41,10 +40,11 @@ async function downloadBlob(containerName, blobName, stdout = process.stdout) {
         if (!(await blobClient.exists())) {
             throw new Error(`Error: No blob exists with this name: ${blobName}`);
         }
-        const buffer = await blobClient.downloadToBuffer();
-        const bufferStream = new stream.PassThrough();
-        bufferStream.end(buffer);
-        bufferStream.pipe(stdout);
+        // get blob
+        const blob = await blobClient.download()
+        // pipe the stream to the response
+        blob.blobDownloadStream.pipe(stdout)
+
         return true;
     } catch(e) {
         return Promise.reject(e)
