@@ -1,6 +1,6 @@
 {
   "name": "azure-dearchiver",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Download files from Azure Blob Storage",
   "main": "server.js",
   "scripts": {

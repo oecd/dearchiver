@@ -1,5 +1,5 @@
 const oldOecdCodeRE = new RegExp(/([0-9]{2})([0-9]{4})([0-9]{2})([0-9]{1})/);
-const newOecdCodeRE = new RegExp(/([a-z]{3,4})-([0-9]{4})-([0-9]{1,5})-([a-z]{2})/);
+const newOecdCodeRE = new RegExp(/([a-z]{3,4})-([0-9]{4})-([0-9]{1,5})-([a-z]{2,6})/);
 let a, dirCode, yearCode, familyCode, langCode;
 
 const checkCode = (code) => {
