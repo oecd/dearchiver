@@ -30,24 +30,28 @@ async function blobExists(containerName, blobName) {
     }
 }
 
-async function downloadBlob(containerName, blobName, stdout = process.stdout) {
+async function downloadBlob(containerName, blobName, res) {
     try {
         const containerClient = blobServiceClient.getContainerClient(containerName);
+        
         if (!(await containerClient.exists())) {
             throw new Error(`Error: No container exists with this name: ${containerName}`);
         }
+
         const blobClient = containerClient.getBlobClient(blobName);
         if (!(await blobClient.exists())) {
             throw new Error(`Error: No blob exists with this name: ${blobName}`);
         }
-        // get blob
-        const blob = await blobClient.download()
-        // pipe the stream to the response
-        blob.blobDownloadStream.pipe(stdout)
 
-        return true;
-    } catch(e) {
-        return Promise.reject(e)
+        const downloadResponse = await blobClient.download();
+
+        res.setHeader('Content-Disposition', `attachment; filename="${blobName}"`);
+        res.setHeader('Content-Type', downloadResponse.contentType || 'application/octet-stream');
+
+        downloadResponse.readableStreamBody.pipe(res);
+    } catch (e) {
+        console.error(`Error downloading blob: ${e.message}`);
+        res.status(500).send(`Error downloading blob: ${e.message}`);
     }
 }
 module.exports = {
